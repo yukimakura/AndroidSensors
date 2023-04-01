@@ -31,6 +31,7 @@ import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,9 @@ import android.widget.EditText;
 
 
 import com.otaliastudios.cameraview.CameraView;
+import com.otaliastudios.cameraview.Frame;
+import com.otaliastudios.cameraview.FrameProcessor;
+import com.otaliastudios.cameraview.VideoQuality;
 
 import org.ros.address.InetAddressFactory;
 import org.ros.android.RosActivity;
@@ -94,6 +98,7 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
 
         final LocationPublisherNode locationPublisherNode = new LocationPublisherNode();
         ImuPublisherNode imuPublisherNode = new ImuPublisherNode();
+        ImagePublisherNode imagePublisherNode = new ImagePublisherNode();
 
         MainActivity.this.locationFrameIdListener = locationPublisherNode.getFrameIdListener();
         MainActivity.this.imuFrameIdListener = imuPublisherNode.getFrameIdListener();
@@ -171,11 +176,16 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
         NodeConfiguration nodeConfiguration = NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress());
         nodeConfiguration.setMasterUri(getMasterUri());
 
-        nodeMainExecutor.execute(locationPublisherNode, nodeConfiguration);
-        nodeMainExecutor.execute(imuPublisherNode, nodeConfiguration);
-
         CameraView camera = findViewById(R.id.camera);
         camera.setLifecycleOwner(this);
+        camera.addFrameProcessor(imagePublisherNode.frameProcessor);
+        camera.setDrawingCacheEnabled(false);
+        camera.setVideoQuality(VideoQuality.MAX_480P);;
+
+        nodeMainExecutor.execute(locationPublisherNode, nodeConfiguration);
+        nodeMainExecutor.execute(imuPublisherNode, nodeConfiguration);
+        nodeMainExecutor.execute(imagePublisherNode, nodeConfiguration);
+
 
         onClick(null);
     }

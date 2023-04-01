@@ -91,7 +91,6 @@ public class LocationPublisherNode extends AbstractNodeMain {
 
                     navSatFix.setLatitude(cachedLocation.getLatitude());
                     navSatFix.setLongitude(cachedLocation.getLongitude());
-                    Log.d(TAG, "LOCATION PUBLISHED");
                     locationPublisher.publish(navSatFix);
 
                     //Wait until minimum time has elapsed
