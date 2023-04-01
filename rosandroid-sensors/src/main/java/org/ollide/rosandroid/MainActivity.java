@@ -20,7 +20,6 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,8 +30,6 @@ import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,9 +37,6 @@ import android.widget.EditText;
 
 
 import com.otaliastudios.cameraview.CameraView;
-import com.otaliastudios.cameraview.Frame;
-import com.otaliastudios.cameraview.FrameProcessor;
-import com.otaliastudios.cameraview.VideoQuality;
 
 import org.ros.address.InetAddressFactory;
 import org.ros.android.RosActivity;
@@ -180,7 +174,6 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
         camera.setLifecycleOwner(this);
         camera.addFrameProcessor(imagePublisherNode.frameProcessor);
         camera.setDrawingCacheEnabled(false);
-        camera.setVideoQuality(VideoQuality.MAX_480P);;
 
         nodeMainExecutor.execute(locationPublisherNode, nodeConfiguration);
         nodeMainExecutor.execute(imuPublisherNode, nodeConfiguration);

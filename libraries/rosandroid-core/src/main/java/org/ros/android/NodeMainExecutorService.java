@@ -37,10 +37,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
+
 import org.ros.RosCore;
 import org.ros.android.R;
 import org.ros.concurrent.ListenerGroup;

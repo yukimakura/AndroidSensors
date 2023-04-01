@@ -27,7 +27,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -39,6 +38,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.ros.exception.RosRuntimeException;
 import org.ros.internal.node.client.MasterClient;
 import org.ros.internal.node.xmlrpc.XmlRpcTimeoutException;
