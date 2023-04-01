@@ -17,9 +17,14 @@
 package org.ollide.rosandroid;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Criteria;
@@ -31,6 +36,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+
+import com.otaliastudios.cameraview.CameraView;
 
 import org.ros.address.InetAddressFactory;
 import org.ros.android.RosActivity;
@@ -44,14 +52,17 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
     Button applyB;
     private OnFrameIdChangeListener locationFrameIdListener, imuFrameIdListener;
 
+    private static String notificationName = "RosAndroidExample";
+
     public MainActivity() {
-        super("RosAndroidExample", "RosAndroidExample");
+        super(notificationName, notificationName);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
 
         locationFrameIdListener = new OnFrameIdChangeListener() {
             @Override
@@ -162,6 +173,9 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
 
         nodeMainExecutor.execute(locationPublisherNode, nodeConfiguration);
         nodeMainExecutor.execute(imuPublisherNode, nodeConfiguration);
+
+        CameraView camera = findViewById(R.id.camera);
+        camera.setLifecycleOwner(this);
 
         onClick(null);
     }

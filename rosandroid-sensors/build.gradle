@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
     buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "org.ollide.rosandroid"
         // Android 4.0+ http://dannyroa.com/2013/10/17/why-its-time-to-support-only-android-4-0-and-above
-        minSdkVersion 14
-        targetSdkVersion 26
+        minSdkVersion 15
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -29,4 +29,6 @@ android {
 dependencies {
     api project(':libraries:rosandroid-core')
     implementation project(':libraries:rosandroid-core')
+
+    api 'com.otaliastudios:cameraview:1.6.1'
 }

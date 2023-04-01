@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.common.base.Preconditions;
 
@@ -38,7 +39,7 @@ import java.net.URISyntaxException;
 /**
  * @author damonkohler@google.com (Damon Kohler)
  */
-public abstract class RosActivity extends Activity {
+public abstract class RosActivity extends AppCompatActivity {
 
   protected static final int MASTER_CHOOSER_REQUEST_CODE = 0;
 

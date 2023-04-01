@@ -20,8 +20,11 @@ import com.google.common.base.Preconditions;
 
 import android.app.AlertDialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -29,6 +32,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -211,6 +215,27 @@ public class NodeMainExecutorService extends Service implements NodeMainExecutor
     if (intent.getAction().equals(ACTION_START)) {
       Preconditions.checkArgument(intent.hasExtra(EXTRA_NOTIFICATION_TICKER));
       Preconditions.checkArgument(intent.hasExtra(EXTRA_NOTIFICATION_TITLE));
+
+      NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+      String name = "通知のタイトル的情報を設定";
+      String id = "casareal_foreground";
+      String notifyDescription = "この通知の詳細情報を設定します";
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+
+        if (manager.getNotificationChannel(id) == null) {
+
+          NotificationChannel channel1 = new NotificationChannel(
+                  id,
+                  name,
+                  NotificationManager.IMPORTANCE_HIGH
+          );
+          channel1.setDescription(notifyDescription);
+          manager.createNotificationChannel(channel1);
+        }
+      }
+
+
       NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
       Intent notificationIntent = new Intent(this, NodeMainExecutorService.class);
       notificationIntent.setAction(NodeMainExecutorService.ACTION_SHUTDOWN);
@@ -222,6 +247,7 @@ public class NodeMainExecutorService extends Service implements NodeMainExecutor
               .setContentTitle(intent.getStringExtra(EXTRA_NOTIFICATION_TITLE))
               .setAutoCancel(true)
               .setContentText("Tap to shutdown.")
+              .setChannelId(id)
               .build();
       startForeground(ONGOING_NOTIFICATION, notification);
     }

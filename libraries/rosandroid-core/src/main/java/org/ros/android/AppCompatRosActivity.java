@@ -101,7 +101,7 @@ public abstract class AppCompatRosActivity extends RosActivity {
     public void invalidateOptionsMenu() {
         getDelegate().invalidateOptionsMenu();
     }
-    private AppCompatDelegate getDelegate() {
+    public AppCompatDelegate getDelegate() {
         if (mDelegate == null) {
             mDelegate = AppCompatDelegate.create(this, null);
         }
