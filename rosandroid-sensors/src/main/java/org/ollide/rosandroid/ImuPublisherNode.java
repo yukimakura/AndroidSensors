@@ -30,11 +30,11 @@ public class ImuPublisherNode extends AbstractNodeMain {
     private SensorEventListener gyroscopeListener;
     private SensorEventListener orientationListener;
 
-    private float ax, ay, az;
-    private float aRoll, aPitch, aYaw;
-    private float roll, pitch, yaw;
+    private double ax, ay, az;
+    private double aRoll, aPitch, aYaw;
+    private double roll, pitch, yaw;
     private String imuFrameId;
-    private float prevRoll, prevPitch, prevYaw;
+    private double prevRoll, prevPitch, prevYaw;
     private OnFrameIdChangeListener imuFrameIdChangeListener;
 
     public ImuPublisherNode() {
@@ -46,16 +46,18 @@ public class ImuPublisherNode extends AbstractNodeMain {
         accelerometerListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if (!(
-                        ax == sensorEvent.values[0] &&
-                        ay == sensorEvent.values[1] &&
-                        az == sensorEvent.values[2]
-                )) {
-                    ax = sensorEvent.values[0];
-                    ay = sensorEvent.values[1];
-                    az = sensorEvent.values[2];
-                    isAccelerometerMessagePending = true;
-                }
+
+                final double alpha = 0.8;
+
+                double[] gravity = new double[3];
+                gravity[0] = alpha * gravity[0] + (1 - alpha) * sensorEvent.values[0];
+                gravity[1] = alpha * gravity[1] + (1 - alpha) * sensorEvent.values[1];
+                gravity[2] = alpha * gravity[2] + (1 - alpha) * sensorEvent.values[2];
+
+                ax = sensorEvent.values[0] - gravity[0];
+                ay = sensorEvent.values[1] - gravity[1];
+                az = sensorEvent.values[2] - gravity[2];
+                isAccelerometerMessagePending = true;
             }
 
             @Override
@@ -66,16 +68,10 @@ public class ImuPublisherNode extends AbstractNodeMain {
         gyroscopeListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if (!(
-                        aRoll == -sensorEvent.values[1] &&
-                        aPitch == -sensorEvent.values[2] &&
-                        aYaw == sensorEvent.values[0]
-                )) {
-                    aRoll = -sensorEvent.values[1];
-                    aPitch = -sensorEvent.values[2];
-                    aYaw = sensorEvent.values[0];
-                    isGyroscopeMessagePending = true;
-                }
+                aRoll = Math.toRadians(sensorEvent.values[2]);
+                aPitch = Math.toRadians(-sensorEvent.values[0]);
+                aYaw = Math.toRadians(-sensorEvent.values[1]);
+                isGyroscopeMessagePending = true;
             }
 
             @Override
@@ -86,17 +82,13 @@ public class ImuPublisherNode extends AbstractNodeMain {
         orientationListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if (!(
-                        roll == -sensorEvent.values[1] &&
-                        pitch == -sensorEvent.values[2] &&
-                        yaw == 360 - sensorEvent.values[0]
-                )) {
-                    roll = -sensorEvent.values[1];
-                    pitch = -sensorEvent.values[2];
-                    yaw = 360 - sensorEvent.values[0];
 
-                    isOrientationMessagePending = true;
-                }
+                roll = Math.toRadians(sensorEvent.values[2]);
+                pitch = Math.toRadians(-sensorEvent.values[0]);
+                yaw = Math.toRadians(-sensorEvent.values[1]);
+
+                isOrientationMessagePending = true;
+
             }
 
             @Override
@@ -140,13 +132,13 @@ public class ImuPublisherNode extends AbstractNodeMain {
                     imuMessage.getLinearAcceleration().setZ(az);
 
                     float dt = (currentTimeMillis - previousPublishTime) / 1000.f;
-                    float dRoll = (roll - prevRoll);
+                    double dRoll = (roll - prevRoll);
                     if (dRoll > 180)
                         dRoll = 360 - dRoll;
-                    float dPitch = (pitch - prevPitch);
+                    double dPitch = (pitch - prevPitch);
                     if (dPitch > 180)
                         dPitch = 360 - dPitch;
-                    float dYaw = (yaw - prevYaw);
+                    double dYaw = (yaw - prevYaw);
                     if (dYaw > 180)
                         dYaw = 360 - dYaw;
 
@@ -201,8 +193,8 @@ public class ImuPublisherNode extends AbstractNodeMain {
         return imuFrameIdChangeListener;
     }
 
-    private quatStruct fromAngles(float yaw, float roll, float pitch) {
-        float angle;
+    private quatStruct fromAngles(double yaw, double roll, double pitch) {
+        double angle;
         double sinRoll, sinPitch, sinYaw, cosRoll, cosPitch, cosYaw;
         angle = pitch * 0.5f;
         sinPitch = Math.sin(angle);
