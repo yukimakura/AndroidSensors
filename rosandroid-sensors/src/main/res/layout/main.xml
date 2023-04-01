@@ -40,6 +40,23 @@
         android:hint="@string/default_imu_hint"
         android:inputType="text"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/label_camera_frame_id"
+        android:id="@+id/textView4"
+        android:layout_gravity="center_horizontal"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_camera_frame_id"
+        android:text="@string/default_camera_frame_id"
+        android:layout_gravity="center_horizontal"
+        android:hint="@string/default_camera_hint"
+        android:inputType="text"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

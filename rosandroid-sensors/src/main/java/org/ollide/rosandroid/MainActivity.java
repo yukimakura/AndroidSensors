@@ -37,6 +37,7 @@ import android.widget.EditText;
 
 
 import com.otaliastudios.cameraview.CameraView;
+import com.otaliastudios.cameraview.size.SizeSelectors;
 
 import org.ros.address.InetAddressFactory;
 import org.ros.android.RosActivity;
@@ -46,9 +47,9 @@ import org.ros.node.NodeMainExecutor;
 public class MainActivity extends RosActivity implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private EditText locationFrameIdView, imuFrameIdView;
+    private EditText locationFrameIdView, imuFrameIdView, cameraFrameIdView;
     Button applyB;
-    private OnFrameIdChangeListener locationFrameIdListener, imuFrameIdListener;
+    private OnFrameIdChangeListener locationFrameIdListener, imuFrameIdListener, cameraFrameIdListener;
 
     private static String notificationName = "RosAndroidExample";
 
@@ -74,13 +75,22 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
                 Log.w(TAG, "Default IMU OnFrameIdChangedListener called");
             }
         };
+        cameraFrameIdListener = new OnFrameIdChangeListener() {
+            @Override
+            public void onFrameIdChanged(String newFrameId) {
+                Log.w(TAG, "Default Camera OnFrameIdChangedListener called");
+            }
+        };
+
 
         locationFrameIdView = findViewById(R.id.et_location_frame_id);
         imuFrameIdView = findViewById(R.id.et_imu_frame_id);
+        cameraFrameIdView = findViewById(R.id.et_camera_frame_id);
 
         SharedPreferences sp = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         locationFrameIdView.setText(sp.getString("locationFrameId", getString(R.string.default_location_frame_id)));
         imuFrameIdView.setText(sp.getString("imuFrameId", getString(R.string.default_imu_frame_id)));
+        cameraFrameIdView.setText(sp.getString("cameraFrameId", getString(R.string.default_camera_frame_id)));
 
         applyB = findViewById(R.id.b_apply);
         applyB.setOnClickListener(this);
@@ -96,6 +106,7 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
 
         MainActivity.this.locationFrameIdListener = locationPublisherNode.getFrameIdListener();
         MainActivity.this.imuFrameIdListener = imuPublisherNode.getFrameIdListener();
+        MainActivity.this.cameraFrameIdListener = imagePublisherNode.getFrameIdListener();
 
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -171,9 +182,10 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
         nodeConfiguration.setMasterUri(getMasterUri());
 
         CameraView camera = findViewById(R.id.camera);
-        camera.setLifecycleOwner(this);
         camera.addFrameProcessor(imagePublisherNode.frameProcessor);
-        camera.setDrawingCacheEnabled(false);
+        camera.setPreviewStreamSize(SizeSelectors.and(SizeSelectors.maxHeight(320),SizeSelectors.maxWidth((320))));
+        camera.setLifecycleOwner(this);
+
 
         nodeMainExecutor.execute(locationPublisherNode, nodeConfiguration);
         nodeMainExecutor.execute(imuPublisherNode, nodeConfiguration);
@@ -195,9 +207,14 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
             spe.putString("locationFrameId", newLocationFrameId);
         }
         String newImuFrameId = imuFrameIdView.getText().toString();
-        if (!newLocationFrameId.isEmpty()) {
+        if (!newImuFrameId.isEmpty()) {
             imuFrameIdListener.onFrameIdChanged(newImuFrameId);
             spe.putString("imuFrameId", newImuFrameId);
+        }
+        String newCameraFrameId = cameraFrameIdView.getText().toString();
+        if (!newCameraFrameId.isEmpty()) {
+            cameraFrameIdListener.onFrameIdChanged(newCameraFrameId);
+            spe.putString("cameraFrameId", newCameraFrameId);
         }
         spe.apply();
     }

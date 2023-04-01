@@ -5,11 +5,13 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
 import org.ros.concurrent.CancellableLoop;
+import org.ros.internal.message.RawMessage;
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
 
+import geometry_msgs.Quaternion;
 import sensor_msgs.Imu;
 import std_msgs.Header;
 
@@ -156,10 +158,11 @@ public class ImuPublisherNode extends AbstractNodeMain {
                     prevPitch = pitch;
                     prevYaw = yaw;
 
-                    imuMessage.getOrientation().setW(roll);
-                    imuMessage.getOrientation().setX(roll);
-                    imuMessage.getOrientation().setY(pitch);
-                    imuMessage.getOrientation().setZ(yaw);
+                    quatStruct quat = fromAngles(yaw,roll,pitch);
+                    imuMessage.getOrientation().setW(quat.W);
+                    imuMessage.getOrientation().setX(quat.X);
+                    imuMessage.getOrientation().setY(quat.Y);
+                    imuMessage.getOrientation().setZ(quat.Z);
 
                     imuPublisher.publish(imuMessage);
 
@@ -196,5 +199,51 @@ public class ImuPublisherNode extends AbstractNodeMain {
 
     public OnFrameIdChangeListener getFrameIdListener() {
         return imuFrameIdChangeListener;
+    }
+
+    private quatStruct fromAngles(float yaw, float roll, float pitch) {
+        float angle;
+        double sinRoll, sinPitch, sinYaw, cosRoll, cosPitch, cosYaw;
+        angle = pitch * 0.5f;
+        sinPitch = Math.sin(angle);
+        cosPitch = Math.cos(angle);
+        angle = roll * 0.5f;
+        sinRoll = Math.sin(angle);
+        cosRoll = Math.cos(angle);
+        angle = yaw * 0.5f;
+        sinYaw = Math.sin(angle);
+        cosYaw = Math.cos(angle);
+
+        // variables used to reduce multiplication calls.
+        double cosRollXcosPitch = cosRoll * cosPitch;
+        double sinRollXsinPitch = sinRoll * sinPitch;
+        double cosRollXsinPitch = cosRoll * sinPitch;
+        double sinRollXcosPitch = sinRoll * cosPitch;
+
+        quatStruct quat = new quatStruct();
+        quat.W = (cosRollXcosPitch * cosYaw - sinRollXsinPitch * sinYaw);
+        quat.X = (cosRollXcosPitch * sinYaw + sinRollXsinPitch * cosYaw);
+        quat.Y = (sinRollXcosPitch * cosYaw + cosRollXsinPitch * sinYaw);
+        quat.Z = (cosRollXsinPitch * cosYaw - sinRollXcosPitch * sinYaw);
+
+
+        double n = Math.sqrt(1f / norm(quat));
+        quat.W *= n;
+        quat.X *= n;
+        quat.Y *= n;
+        quat.Z *= n;
+
+        return quat;
+    }
+
+    public double norm(quatStruct quat) {
+        return quat.W * quat.W + quat.X * quat.X + quat.Y * quat.Y + quat.Z * quat.Z;
+    }
+
+    private class quatStruct{
+        public double W;
+        public double X;
+        public double Y;
+        public double Z;
     }
 }
