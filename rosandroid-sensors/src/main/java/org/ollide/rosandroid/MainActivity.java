@@ -183,7 +183,7 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
 
         CameraView camera = findViewById(R.id.camera);
         camera.addFrameProcessor(imagePublisherNode.frameProcessor);
-        camera.setPreviewStreamSize(SizeSelectors.and(SizeSelectors.maxHeight(320),SizeSelectors.maxWidth((320))));
+        camera.setPreviewStreamSize(SizeSelectors.and(SizeSelectors.maxHeight(640),SizeSelectors.maxWidth((640))));
         camera.setLifecycleOwner(this);
 
 

@@ -5,13 +5,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
 import org.ros.concurrent.CancellableLoop;
-import org.ros.internal.message.RawMessage;
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
 
-import geometry_msgs.Quaternion;
 import sensor_msgs.Imu;
 import std_msgs.Header;
 
@@ -36,6 +34,7 @@ public class ImuPublisherNode extends AbstractNodeMain {
     private String imuFrameId;
     private double prevRoll, prevPitch, prevYaw;
     private OnFrameIdChangeListener imuFrameIdChangeListener;
+    private double[] gravityBuffer = new double[3];
 
     public ImuPublisherNode() {
         this.topic_name = "imu_data";
@@ -49,14 +48,13 @@ public class ImuPublisherNode extends AbstractNodeMain {
 
                 final double alpha = 0.8;
 
-                double[] gravity = new double[3];
-                gravity[0] = alpha * gravity[0] + (1 - alpha) * sensorEvent.values[0];
-                gravity[1] = alpha * gravity[1] + (1 - alpha) * sensorEvent.values[1];
-                gravity[2] = alpha * gravity[2] + (1 - alpha) * sensorEvent.values[2];
+                gravityBuffer[0] = alpha * gravityBuffer[0] + (1 - alpha) * sensorEvent.values[0];
+                gravityBuffer[1] = alpha * gravityBuffer[1] + (1 - alpha) * sensorEvent.values[1];
+                gravityBuffer[2] = alpha * gravityBuffer[2] + (1 - alpha) * sensorEvent.values[2];
 
-                ax = sensorEvent.values[0] - gravity[0];
-                ay = sensorEvent.values[1] - gravity[1];
-                az = sensorEvent.values[2] - gravity[2];
+                ax = sensorEvent.values[0] - gravityBuffer[0];
+                ay = sensorEvent.values[1] - gravityBuffer[1];
+                az = sensorEvent.values[2] - gravityBuffer[2];
                 isAccelerometerMessagePending = true;
             }
 

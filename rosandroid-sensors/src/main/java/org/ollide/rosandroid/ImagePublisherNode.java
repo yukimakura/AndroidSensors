@@ -101,7 +101,7 @@ public class ImagePublisherNode extends AbstractNodeMain {
     @Override
     public void onStart(final ConnectedNode connectedNode) {
         this.connectedNode = connectedNode;
-        imagePublisher = connectedNode.newPublisher("image", CompressedImage._TYPE);
+        imagePublisher = connectedNode.newPublisher("image/compressed", CompressedImage._TYPE);
         connectedNode.executeCancellableLoop(new CancellableLoop() {
 
 
