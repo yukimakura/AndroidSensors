@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "org.ollide.rosandroid"
         // Android 4.0+ http://dannyroa.com/2013/10/17/why-its-time-to-support-only-android-4-0-and-above
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -30,5 +30,6 @@ dependencies {
     api project(':libraries:rosandroid-core')
     implementation project(':libraries:rosandroid-core')
 
+    implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
     api 'com.otaliastudios:cameraview:2.7.2'
 }
