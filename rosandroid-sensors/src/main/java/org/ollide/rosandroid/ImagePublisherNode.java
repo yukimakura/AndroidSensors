@@ -46,7 +46,6 @@ public class ImagePublisherNode extends AbstractNodeMain {
     public FrameProcessor frameProcessor = new FrameProcessor() {
         @Override
         public void process(@NonNull Frame frame) {
-            Log.d("ImageNode","FrameCallback");
             long time = frame.getTime();
             Size size = frame.getSize();
             int format = frame.getFormat();
@@ -67,7 +66,6 @@ public class ImagePublisherNode extends AbstractNodeMain {
                     imageMessage.setFormat("jpeg");
                     imageMessage.setData(new LittleEndianHeapChannelBuffer( ImageUtil.nv21ToJpeg((byte[]) frame.getData(),receivedImageWidth,receivedImageHeight,null)));
 
-                    Log.d("ImageNode","Publish! "+receivedImageWidth +"x"+ receivedImageHeight);
                     imagePublisher.publish(imageMessage);
 
                     imageMessage = null;

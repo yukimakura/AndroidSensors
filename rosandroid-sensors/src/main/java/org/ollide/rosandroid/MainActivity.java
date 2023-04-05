@@ -115,55 +115,12 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
     protected void init(NodeMainExecutor nodeMainExecutor) {
         Log.d(TAG, "init()");
 
+        UsbManager manager = (UsbManager)getSystemService(Context.USB_SERVICE);
+
         final LocationPublisherNode locationPublisherNode = new LocationPublisherNode();
         ImuPublisherNode imuPublisherNode = new ImuPublisherNode();
         ImagePublisherNode imagePublisherNode = new ImagePublisherNode();
-        final UsbBno055ImuPublisherNode usbBno055ImuPublisherNode = new UsbBno055ImuPublisherNode();
-
-
-        UsbManager manager = (UsbManager)getSystemService(Context.USB_SERVICE);
-        // Find all available drivers from attached devices.
-        List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
-        if (availableDrivers.isEmpty()) {
-            return;
-        }
-
-        // Open a connection to the first available driver.
-        UsbSerialDriver driver = availableDrivers.get(0);
-        UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
-        if (connection == null) {
-            // add UsbManager.requestPermission(driver.getDevice(), ..) handling here
-            return;
-        }
-
-
-        UsbSerialPort port = driver.getPorts().get(0); // Most devices have just one port (port 0)
-        try {
-            port.open(connection);
-            port.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
-            if (port != null) {
-                // シリアル通信マネージャと、シリアルポート、イベント受信時のコールバックを紐づける
-                SerialInputOutputManager serIoManager = new SerialInputOutputManager(port, new SerialInputOutputManager.Listener() {
-                    @Override
-                    public void onNewData(byte[] bytes) {
-                        usbBno055ImuPublisherNode.OnBNO055Listener.onNewData(bytes);
-                    }
-
-                    @Override
-                    public void onRunError(Exception e) {
-
-                    }
-                });
-                // マルチスレッド出来れば何でもよい
-                new Thread(serIoManager).start();
-            } else {
-                // 適当にエラーハンドリング
-                Log.e("BNO055Node","オープンに失敗");
-            }
-        }catch (Exception ex){
-            Log.e("BNO055Node","デバイスのオープンに失敗しました");
-        }
-
+        final UsbBno055ImuPublisherNode usbBno055ImuPublisherNode = new UsbBno055ImuPublisherNode(manager);
 
 
         MainActivity.this.locationFrameIdListener = locationPublisherNode.getFrameIdListener();

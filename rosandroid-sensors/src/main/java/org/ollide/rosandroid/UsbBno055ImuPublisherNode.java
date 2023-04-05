@@ -29,6 +29,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import sensor_msgs.CompressedImage;
@@ -49,6 +50,8 @@ public class UsbBno055ImuPublisherNode extends AbstractNodeMain {
     private OnFrameIdChangeListener imuFrameIdChangeListener;
     private double[] gravityBuffer = new double[3];
 
+    private UsbManager manager;
+
     public OnBNO055Listener OnBNO055Listener = new OnBNO055Listener() {
         @Override
         public void onNewData(byte[] newData) {
@@ -61,8 +64,8 @@ public class UsbBno055ImuPublisherNode extends AbstractNodeMain {
         }
     };
 
-    public UsbBno055ImuPublisherNode() {
-
+    public UsbBno055ImuPublisherNode(UsbManager manager) {
+        this.manager = manager;
 
         imuFrameIdChangeListener = new OnFrameIdChangeListener() {
             @Override
@@ -81,6 +84,52 @@ public class UsbBno055ImuPublisherNode extends AbstractNodeMain {
     public void onStart(final ConnectedNode connectedNode) {
         this.connectedNode = connectedNode;
         imuPublisher = connectedNode.newPublisher("bno055/imu/data", Imu._TYPE);
+
+        // Find all available drivers from attached devices.
+        List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
+        if (availableDrivers.isEmpty()) {
+            return;
+        }
+
+        // Open a connection to the first available driver.
+        UsbSerialDriver driver = availableDrivers.get(0);
+        UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
+        if (connection == null) {
+            // add UsbManager.requestPermission(driver.getDevice(), ..) handling here
+            return;
+        }
+
+
+        final UsbSerialPort port = driver.getPorts().get(0); // Most devices have just one port (port 0)
+        try {
+            port.open(connection);
+            port.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+            if (port != null) {
+                // シリアル通信マネージャと、シリアルポート、イベント受信時のコールバックを紐づける
+                final SerialInputOutputManager serIoManager = new SerialInputOutputManager(port, new SerialInputOutputManager.Listener() {
+                    @Override
+                    public void onNewData(byte[] bytes) {
+                        OnBNO055Listener.onNewData(bytes);
+                    }
+
+                    @Override
+                    public void onRunError(Exception e) {
+                        Log.e("BNO055Node",e.getMessage());
+                    }
+                });
+                serIoManager.start();
+                Log.i("BNO055Node",serIoManager.getState().toString());
+
+
+
+            } else {
+                // 適当にエラーハンドリング
+                Log.e("BNO055Node","オープンに失敗");
+            }
+        }catch (Exception ex){
+            Log.e("BNO055Node","デバイスのオープンに失敗しました");
+        }
+
         connectedNode.executeCancellableLoop(new CancellableLoop() {
 
 
