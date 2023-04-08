@@ -1,12 +1,12 @@
 ## Rosjava Project Template for Android Studio ##
 
-内蔵IMU、GPS情報に加え、このレポではカメラ画像をJpegで圧縮してPublishする機能も提供
-Android13の端末で動作確認
-一部AndroidX化
-
-オマケ機能でUSB経由の外付けBNO055のIMUデータも吐く(ただし、マイコン用のソースコードは別途必須)
-
-**以下原文**
+内蔵IMU、GPS情報に加え、このレポではカメラ画像をJpegで圧縮してPublishする機能も提供.  
+Android13の端末で動作確認.  
+一部AndroidX化.  
+   
+オマケ機能でUSB経由の外付けBNO055のIMUデータも吐く(ただし、マイコン用のソースコードは別途必須).  
+   
+**以下原文**.  
 
 This project template makes it easy to get started with Android programming for
 [ROS.org](http://www.ros.org/wiki/). Its structure complies with the new Gradle-based
