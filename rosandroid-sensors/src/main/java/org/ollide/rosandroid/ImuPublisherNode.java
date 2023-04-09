@@ -3,6 +3,7 @@ package org.ollide.rosandroid;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.os.Build;
 
 import org.ros.concurrent.CancellableLoop;
 import org.ros.namespace.GraphName;
@@ -37,7 +38,7 @@ public class ImuPublisherNode extends AbstractNodeMain {
     private double[] gravityBuffer = new double[3];
 
     public ImuPublisherNode() {
-        this.topic_name = "imu_data";
+        this.topic_name = Build.MODEL+"/smartphoneinternal/imu/data";
         isAccelerometerMessagePending = false;
         isGyroscopeMessagePending = false;
         isOrientationMessagePending = false;
@@ -104,7 +105,7 @@ public class ImuPublisherNode extends AbstractNodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("ros_android_sensors/imu_publisher_node");
+        return GraphName.of(Build.MODEL+"/ros_android_sensors/imu_publisher_node");
     }
 
     @Override

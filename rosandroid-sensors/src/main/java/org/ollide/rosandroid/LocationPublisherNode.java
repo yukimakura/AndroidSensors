@@ -2,6 +2,7 @@ package org.ollide.rosandroid;
 
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -34,7 +35,7 @@ public class LocationPublisherNode extends AbstractNodeMain {
     private OnFrameIdChangeListener locationFrameIdChangeListener;
 
     public LocationPublisherNode() {
-        this.topic_name = "fix";
+        this.topic_name = Build.MODEL+"/fix";
         isMessagePending = false;
         locationListener = new LocationListener() {
             @Override
@@ -111,7 +112,7 @@ public class LocationPublisherNode extends AbstractNodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("ros_android_sensors/location_publisher_node");
+        return GraphName.of(Build.MODEL+"/ros_android_sensors/location_publisher_node");
     }
 
     public LocationListener getLocationListener() {

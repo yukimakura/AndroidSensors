@@ -1,5 +1,6 @@
 package org.ollide.rosandroid;
 
+import android.os.Build;
 import android.util.Log;
 
 
@@ -92,14 +93,14 @@ public class ImagePublisherNode extends AbstractNodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("ros_android_sensors/image_publisher_node");
+        return GraphName.of(Build.MODEL+"/ros_android_sensors/image_publisher_node");
     }
 
 
     @Override
     public void onStart(final ConnectedNode connectedNode) {
         this.connectedNode = connectedNode;
-        imagePublisher = connectedNode.newPublisher("image/compressed", CompressedImage._TYPE);
+        imagePublisher = connectedNode.newPublisher(Build.MODEL+"/image/compressed", CompressedImage._TYPE);
         connectedNode.executeCancellableLoop(new CancellableLoop() {
 
 
