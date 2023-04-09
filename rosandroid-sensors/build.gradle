@@ -32,4 +32,5 @@ dependencies {
 
     implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
     api 'com.otaliastudios:cameraview:2.7.2'
+    api "com.benlypan:UsbHid:0.1.0"
 }

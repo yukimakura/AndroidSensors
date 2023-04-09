@@ -120,7 +120,7 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
         final LocationPublisherNode locationPublisherNode = new LocationPublisherNode();
         ImuPublisherNode imuPublisherNode = new ImuPublisherNode();
         ImagePublisherNode imagePublisherNode = new ImagePublisherNode();
-        final UsbBno055ImuPublisherNode usbBno055ImuPublisherNode = new UsbBno055ImuPublisherNode(manager);
+        final UsbBno055ImuPublisherNode usbBno055ImuPublisherNode = new UsbBno055ImuPublisherNode(this);
 
 
         MainActivity.this.locationFrameIdListener = locationPublisherNode.getFrameIdListener();
