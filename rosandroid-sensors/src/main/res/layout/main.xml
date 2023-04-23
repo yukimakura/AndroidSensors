@@ -64,10 +64,10 @@
         android:id="@+id/b_apply"
         android:layout_marginTop="4dp"/>
 
-    <com.otaliastudios.cameraview.CameraView
-        android:id="@+id/camera"
-        android:keepScreenOn="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+<!--    <com.otaliastudios.cameraview.CameraView-->
+<!--        android:id="@+id/camera"-->
+<!--        android:keepScreenOn="true"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content" />-->
 
 </LinearLayout>

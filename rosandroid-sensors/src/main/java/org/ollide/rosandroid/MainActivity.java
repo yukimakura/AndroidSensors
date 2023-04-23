@@ -56,9 +56,9 @@ import java.util.List;
 public class MainActivity extends RosActivity implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private EditText locationFrameIdView, imuFrameIdView, cameraFrameIdView;
+    private EditText locationFrameIdView, imuFrameIdView;//, cameraFrameIdView;
     Button applyB;
-    private OnFrameIdChangeListener locationFrameIdListener, imuFrameIdListener,bnoImuFrameIdListener, cameraFrameIdListener;
+    private OnFrameIdChangeListener locationFrameIdListener, imuFrameIdListener,bnoImuFrameIdListener;//, cameraFrameIdListener;
 
     private static String notificationName = "RosAndroidExample";
 
@@ -90,22 +90,22 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
                 Log.w(TAG, "Default IMU OnFrameIdChangedListener called");
             }
         };
-        cameraFrameIdListener = new OnFrameIdChangeListener() {
-            @Override
-            public void onFrameIdChanged(String newFrameId) {
-                Log.w(TAG, "Default Camera OnFrameIdChangedListener called");
-            }
-        };
+//        cameraFrameIdListener = new OnFrameIdChangeListener() {
+//            @Override
+//            public void onFrameIdChanged(String newFrameId) {
+//                Log.w(TAG, "Default Camera OnFrameIdChangedListener called");
+//            }
+//        };
 
 
         locationFrameIdView = findViewById(R.id.et_location_frame_id);
         imuFrameIdView = findViewById(R.id.et_imu_frame_id);
-        cameraFrameIdView = findViewById(R.id.et_camera_frame_id);
+//        cameraFrameIdView = findViewById(R.id.et_camera_frame_id);
 
         SharedPreferences sp = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         locationFrameIdView.setText(sp.getString("locationFrameId", getString(R.string.default_location_frame_id)));
         imuFrameIdView.setText(sp.getString("imuFrameId", getString(R.string.default_imu_frame_id)));
-        cameraFrameIdView.setText(sp.getString("cameraFrameId", getString(R.string.default_camera_frame_id)));
+//        cameraFrameIdView.setText(sp.getString("cameraFrameId", getString(R.string.default_camera_frame_id)));
 
         applyB = findViewById(R.id.b_apply);
         applyB.setOnClickListener(this);
@@ -126,7 +126,7 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
         MainActivity.this.locationFrameIdListener = locationPublisherNode.getFrameIdListener();
         MainActivity.this.imuFrameIdListener = imuPublisherNode.getFrameIdListener();
         MainActivity.this.bnoImuFrameIdListener = usbBno055ImuPublisherNode.getFrameIdListener();
-        MainActivity.this.cameraFrameIdListener = imagePublisherNode.getFrameIdListener();
+//        MainActivity.this.cameraFrameIdListener = imagePublisherNode.getFrameIdListener();
 
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -201,10 +201,10 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
         NodeConfiguration nodeConfiguration = NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress());
         nodeConfiguration.setMasterUri(getMasterUri());
 
-        CameraView camera = findViewById(R.id.camera);
-        camera.addFrameProcessor(imagePublisherNode.frameProcessor);
-        camera.setPreviewStreamSize(SizeSelectors.and(SizeSelectors.maxHeight(640),SizeSelectors.maxWidth((640))));
-        camera.setLifecycleOwner(this);
+//        CameraView camera = findViewById(R.id.camera);
+//        camera.addFrameProcessor(imagePublisherNode.frameProcessor);
+//        camera.setPreviewStreamSize(SizeSelectors.and(SizeSelectors.maxHeight(640),SizeSelectors.maxWidth((640))));
+//        camera.setLifecycleOwner(this);
 
 
         nodeMainExecutor.execute(locationPublisherNode, nodeConfiguration);
@@ -232,11 +232,11 @@ public class MainActivity extends RosActivity implements View.OnClickListener {
             imuFrameIdListener.onFrameIdChanged(newImuFrameId);
             spe.putString("imuFrameId", newImuFrameId);
         }
-        String newCameraFrameId = cameraFrameIdView.getText().toString();
-        if (!newCameraFrameId.isEmpty()) {
-            cameraFrameIdListener.onFrameIdChanged(newCameraFrameId);
-            spe.putString("cameraFrameId", newCameraFrameId);
-        }
+//        String newCameraFrameId = cameraFrameIdView.getText().toString();
+//        if (!newCameraFrameId.isEmpty()) {
+//            cameraFrameIdListener.onFrameIdChanged(newCameraFrameId);
+//            spe.putString("cameraFrameId", newCameraFrameId);
+//        }
         spe.apply();
     }
 
