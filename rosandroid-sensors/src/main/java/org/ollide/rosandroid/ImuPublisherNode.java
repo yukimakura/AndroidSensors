@@ -38,7 +38,7 @@ public class ImuPublisherNode extends AbstractNodeMain {
     private double[] gravityBuffer = new double[3];
 
     public ImuPublisherNode() {
-        this.topic_name = Build.MODEL+"/smartphoneinternal/imu/data";
+        this.topic_name = Build.MODEL.toLowerCase().replace("-","_").replace(" ","_") + "/smartphoneinternal/imu/data";
         isAccelerometerMessagePending = false;
         isGyroscopeMessagePending = false;
         isOrientationMessagePending = false;
@@ -105,7 +105,7 @@ public class ImuPublisherNode extends AbstractNodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of(Build.MODEL+"/ros_android_sensors/imu_publisher_node");
+        return GraphName.of(Build.MODEL.toLowerCase().replace("-","_").replace(" ","_") + "/ros_android_sensors/imu_publisher_node");
     }
 
     @Override
