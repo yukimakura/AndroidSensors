@@ -83,13 +83,13 @@ public class UsbBno055ImuPublisherNode extends AbstractNodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of(Build.MODEL+"/ros_android_sensors/bno055_imu_publisher_node");
+        return GraphName.of(Build.MODEL.toLowerCase().replace("-","_").replace(" ","_") + "/ros_android_sensors/bno055_imu_publisher_node");
     }
 
     @Override
     public void onStart(final ConnectedNode connectedNode) {
         this.connectedNode = connectedNode;
-        imuPublisher = connectedNode.newPublisher(Build.MODEL+"/bno055/imu/data", Imu._TYPE); // Find all available drivers from attached devices.
+        imuPublisher = connectedNode.newPublisher(Build.MODEL.toLowerCase().replace("-","_").replace(" ","_") + "/bno055/imu/data", Imu._TYPE); // Find all available drivers from attached devices.
         final int vid = 1155;
         final int pid = 22352;
 
