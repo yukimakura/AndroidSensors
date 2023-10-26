@@ -35,7 +35,7 @@ public class LocationPublisherNode extends AbstractNodeMain {
     private OnFrameIdChangeListener locationFrameIdChangeListener;
 
     public LocationPublisherNode() {
-        this.topic_name = Build.MODEL+"/fix";
+        this.topic_name = Build.MODEL.toLowerCase().replace("-","_").replace(" ","_") + "/fix";
         isMessagePending = false;
         locationListener = new LocationListener() {
             @Override
@@ -112,7 +112,7 @@ public class LocationPublisherNode extends AbstractNodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of(Build.MODEL+"/ros_android_sensors/location_publisher_node");
+        return GraphName.of(Build.MODEL.toLowerCase().replace("-","_").replace(" ","_") + "/ros_android_sensors/location_publisher_node");
     }
 
     public LocationListener getLocationListener() {
